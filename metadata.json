@@ -1,0 +1,7 @@
+{
+  "name": "MealMind AI",
+  "description": "AI-powered food demand forecasting and preparation planning platform for hotel and restaurant managers.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
