@@ -442,10 +442,14 @@ class MealMindMLPredictor:
             # IMPORTANT:
             # Support both "Breakfast" and "breakfast"
             # as dictionary keys.
-            details = (
-                request.meal_details.get(meal_slot)
-                or request.meal_details.get(slot_key)
-            )
+            details = next(
+    (
+        value
+        for key, value in request.meal_details.items()
+        if key.strip().lower() == slot_key
+    ),
+    None,
+)
 
             # If no details exist, skip this meal.
             if not details:
