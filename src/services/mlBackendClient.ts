@@ -18,7 +18,7 @@ export function getMLApiBaseUrl(): string {
     typeof window !== 'undefined' &&
     (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
   ) {
-    return 'http://localhost:8000';
+    return 'https://mealmind-backend-mb1b.onrender.com';
   }
   return '';
 }
