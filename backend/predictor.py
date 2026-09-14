@@ -436,23 +436,36 @@ class MealMindMLPredictor:
 
         for meal_slot in request.selected_meals:
 
-            # Convert meal name to lowercase for menu lookup
-            slot_key = meal_slot.lower()
+            # Convert selected meal to lowercase
+            # for menu lookup.
+            slot_key = meal_slot.strip().lower()
 
-            # IMPORTANT:
-            # Support both "Breakfast" and "breakfast"
-            # as dictionary keys.
+
+            # -------------------------------------------------
+            # FIND MEAL DETAILS CASE-INSENSITIVELY
+            # -------------------------------------------------
+            #
+            # Pydantic converts selected_meals to lowercase.
+            # But meal_details may contain:
+            #
+            # "Breakfast"
+            # "breakfast"
+            #
+            # So we compare dictionary keys using .lower().
+            #
+
             details = next(
-    (
-        value
-        for key, value in request.meal_details.items()
-        if key.strip().lower() == slot_key
-    ),
-    None,
-)
+                (
+                    value
+                    for key, value in request.meal_details.items()
+                    if key.strip().lower() == slot_key
+                ),
+                None,
+            )
+
 
             # If no details exist, skip this meal.
-            if not details:
+            if details is None:
                 continue
 
 
@@ -505,6 +518,14 @@ class MealMindMLPredictor:
                 )
 
                 feature_rows.append(row)
+
+
+            # -------------------------------------------------
+            # SAFETY CHECK
+            # -------------------------------------------------
+
+            if not feature_rows:
+                continue
 
 
             # -------------------------------------------------
