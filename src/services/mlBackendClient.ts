@@ -9,18 +9,7 @@
 import { MealSlot, MealServiceDetails, CommonConditions, PreparationPlan, PlanItemPrepResult } from '../types';
 
 export function getMLApiBaseUrl(): string {
-  const envUrl = import.meta.env.VITE_ML_API_URL;
-  if (envUrl && typeof envUrl === 'string' && envUrl.trim() !== '') {
-    return envUrl.trim().replace(/\/+$/, '');
-  }
-  // Only assume localhost:8000 when running directly in local dev environment
-  if (
-    typeof window !== 'undefined' &&
-    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-  ) {
-    return 'https://mealmind-backend-mb1b.onrender.com';
-  }
-  return '';
+  return 'https://mealmind-backend-mb1b.onrender.com';
 }
 
 export interface MLModelStatus {
@@ -174,7 +163,7 @@ export async function predictWithMLBackend(
       selectedItemIds.push(itemId);
       prepItems.push({
         menuItemId: itemId,
-        mealSlot: section.meal_slot as MealSlot,
+        mealSlot: section.meal_slot.toLowerCase() as MealSlot,
         nameEn: item.food_item,
         nameTa: item.food_item_ta || item.food_item,
         category: item.category || 'Kitchen Preparation',
@@ -191,8 +180,8 @@ export async function predictWithMLBackend(
     id: `ML-${Date.now().toString(36).toUpperCase()}`,
     createdAt: new Date().toISOString(),
     date: data.date,
-    mealSlots: selectedMeals,
-    mealSlot: selectedMeals[0],
+    mealSlots: selectedMeals.map(m => m.toLowerCase() as MealSlot),
+    mealSlot: (selectedMeals[0] ? selectedMeals[0].toLowerCase() : section.meal_slot.toLowerCase()) as MealSlot,
     serviceType: 'buffet',
     totalGuestsTarget: data.total_customers,
     selectedItemIds,
